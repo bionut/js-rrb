@@ -27,7 +27,7 @@ Array.prototype.clone = function(){
 }
 var rrb = (function () {
 
-    var RRB_BITS = 5;
+    var RRB_BITS = 4;
     var RRB_BRANCHING = 1 << RRB_BITS;
     var LEAF_NODE = true; var INTERNAL_NODE = false;  // node types
     
@@ -57,9 +57,19 @@ var rrb = (function () {
         new_rrb.length++;
         var new_tail = create_leaf(1);
         new_tail.child[0] = val;
-        return push_down_tail(rrb,new_rrb,new_tail);
+        return push_down_tail(rrb, new_rrb, new_tail);
     }
-
+   
+   function push_down_tail(rrb, new_rrb, new_tail){
+       var old_tail = new_rrb.tail;
+       new_rrb.tail = new_tail;
+       if (rrb.length <= RRB_BRANCHING) {
+           new_rrb.shift = 0;
+           new_rrb.root = old_tail;
+           return new_rrb;
+       }
+   }
+   
     function clone_leaf(source){
         return { type: source.type,
          len: source.len,
